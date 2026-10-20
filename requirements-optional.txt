@@ -1,0 +1,2 @@
+CairoSVG>=2.8
+rawpy>=0.25
