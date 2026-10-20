@@ -43,7 +43,7 @@
 ## 📥 Download
 
 You can download the latest standalone executable (`ProImageConverter.exe`) without needing to install Python:
-- **[Download ProImageConverter v1.0.0 (Windows x64)](https://github.com/mr-5hady/ProImageConverter/releases/latest/download/ProImageConverter.exe)**
+- **[Download ProImageConverter v1.3.0 (Windows x64)](https://github.com/mr-5hady/ProImageConverter/releases/latest/download/ProImageConverter.exe)**
 
 ---
 
@@ -95,7 +95,13 @@ The standalone `.exe` will be generated inside the `dist/` folder.
 - **تنظیمات پیشرفته:** تغییر اندازه هوشمند تصاویر، حفظ متادیتای EXIF، مدیریت شفافیت رنگ‌ها و حفظ انیمیشن‌های متحرک.
 - **رابط کاربری مدرن:** طراحی مینیمال، شیک، با پشتیبانی کامل از حالت تیره (Dark Mode) و روشن (Light Mode) و اعلان‌های شناور بدون قفل‌شدن صفحه.
 
-### نحوه اجرا در ویندوز:
+### دانلود نسخه آماده
+
+بدون نیاز به نصب پایتون، فایل اجرایی ویندوز را از لینک زیر دانلود کنید:
+
+- **[دانلود ProImageConverter نسخه 1.3.0 (ویندوز ۶۴ بیتی)](https://github.com/mr-5hady/ProImageConverter/releases/latest/download/ProImageConverter.exe)**
+
+### نحوه اجرا از سورس در ویندوز:
 1. پایتون ۳.۱۱ یا جدیدتر را نصب کنید (گزینه `Add Python to PATH` فراموش نشود).
 2. فایل `install.bat` را اجرا کنید تا وابستگی‌ها نصب شوند.
 3. فایل `run.bat` را برای اجرای برنامه بزنید.
