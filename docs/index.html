@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pro Image Converter | مبدل حرفه‌ای تصاویر</title>
+<meta name="description" content="Pro Image Converter — هزاران تصویر را یک‌جا به WEBP، AVIF، JPG، PNG و ده فرمت دیگر تبدیل کنید. رایگان و متن‌باز برای ویندوز.">
+<meta property="og:title" content="Pro Image Converter | مبدل حرفه‌ای تصاویر">
+<meta property="og:description" content="تبدیل گروهی تصاویر، سریع و بدون معطلی. رایگان و متن‌باز برای ویندوز.">
+<meta property="og:image" content="assets/shots/dark.png">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F2F4F7;
+  --surface: #FFFFFF;
+  --ink: #10141C;
+  --muted: #5B6577;
+  --line: #DDE2EA;
+  --accent: #2F6FED;
+  --accent-ink: #FFFFFF;
+  --good: #12965A;
+  --screen: #0B1220;
+  --screen-2: #17233A;
+  --radius: 18px;
+  --font: "Vazirmatn", "Segoe UI", Tahoma, sans-serif;
+  --mono: "JetBrains Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A0E15; --surface: #121925; --ink: #EEF2F8; --muted: #8E9BB0;
+    --line: #232D3D; --accent: #4F8CFF; --good: #34C77B;
+    --screen: #05080E; --screen-2: #111B2D;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A0E15; --surface: #121925; --ink: #EEF2F8; --muted: #8E9BB0;
+  --line: #232D3D; --accent: #4F8CFF; --good: #34C77B;
+  --screen: #05080E; --screen-2: #111B2D;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 17px; line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: var(--mono); direction: ltr; unicode-bidi: isolate; }
+
+/* ---------- top bar ---------- */
+.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; }
+.brand img { width: 36px; height: 36px; }
+.brand small { font-family: var(--mono); font-weight: 500; font-size: 12px; color: var(--muted); }
+.top nav { display: flex; gap: 22px; font-size: 15px; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover { color: var(--ink); }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: center; padding: 48px 0 88px; }
+.hero h1 { font-size: clamp(38px, 5.4vw, 64px); line-height: 1.25; font-weight: 900; margin: 0 0 20px; letter-spacing: -0.5px; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p.lead { font-size: 19px; color: var(--muted); font-weight: 400; margin: 0 0 32px; max-width: 30em; }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 14px;
+  font: 800 17px var(--font); text-decoration: none; border: 1px solid var(--line); cursor: pointer;
+  background: var(--surface); color: var(--ink); transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(16,20,28,.35); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.small { padding: 9px 16px; font-size: 15px; border-radius: 11px; }
+.btn svg { width: 20px; height: 20px; }
+.btn[disabled] { opacity: .45; pointer-events: none; }
+.meta { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+/* hero visual: app window on a dark stage, swappable theme */
+.stage {
+  position: relative; border-radius: 22px; padding: 7% 6% 0; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 85% 0%, var(--screen-2), transparent 60%),
+    radial-gradient(80% 80% at 0% 100%, #1B2C4D, transparent 60%),
+    var(--screen);
+  box-shadow: 0 40px 80px -40px rgba(10,20,40,.55), inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.stage img { border-radius: 10px 10px 0 0; box-shadow: 0 20px 50px -18px rgba(0,0,0,.7); width: 100%; height: auto; }
+.badges { position: absolute; inset: 14px 14px auto auto; display: flex; gap: 6px; direction: ltr; }
+.badge {
+  font: 700 11px var(--mono); color: #D7E1F0; padding: 4px 9px; border-radius: 999px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+}
+.view-switch { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.chip {
+  font: 500 13px var(--mono); padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--muted); border: 1px solid var(--line);
+}
+.chip:hover { color: var(--ink); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* ---------- sections ---------- */
+section { padding: 84px 0; border-top: 1px solid var(--line); }
+.eyebrow { font: 700 13px var(--mono); color: var(--accent); letter-spacing: .5px; direction: ltr; text-align: right; }
+h2 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 900; line-height: 1.35; margin: 6px 0 14px; }
+.sub { color: var(--muted); max-width: 40em; margin: 0 0 40px; }
+
+/* features */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.feature { background: var(--surface); padding: 28px 28px 26px; }
+.feature h3 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
+.feature p { margin: 0; color: var(--muted); font-size: 15.5px; line-height: 1.85; }
+.feature .k { font: 700 12px var(--mono); color: var(--accent); display: block; margin-bottom: 10px; direction: ltr; text-align: right; }
+
+/* formats */
+.formats { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.fmt-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+.fmt-card h3 { margin: 0 0 4px; font-size: 18px; }
+.fmt-card p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+.fmt-list { display: flex; flex-wrap: wrap; gap: 8px; direction: ltr; justify-content: flex-end; }
+.fmt { font: 700 13px var(--mono); padding: 6px 11px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); }
+.fmt.opt { border-style: dashed; color: var(--muted); }
+.legend { font-size: 13.5px; color: var(--muted); margin-top: 14px; }
+
+/* playground */
+.play { display: grid; grid-template-columns: 340px 1fr; gap: 24px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.panel h3 { margin: 0 0 10px; font-size: 15px; font-weight: 800; }
+.panel + .panel { margin-top: 0; }
+.field { margin-bottom: 20px; }
+.field:last-child { margin-bottom: 0; }
+.seg { display: flex; gap: 6px; direction: ltr; flex-wrap: wrap; justify-content: flex-end; }
+.seg .chip { font-weight: 700; }
+.range { display: flex; align-items: center; gap: 12px; direction: ltr; }
+.range input { flex: 1; accent-color: var(--accent); }
+.range output { font: 700 14px var(--mono); min-width: 2.5em; text-align: center; }
+.num { width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: 500 15px var(--mono); direction: ltr; }
+.hint2 { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.drop {
+  display: block; border: 2px dashed var(--line); border-radius: var(--radius); padding: 34px 24px; text-align: center;
+  background: var(--surface); transition: border-color .15s, background .15s; cursor: pointer;
+}
+.drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface)); }
+.drop strong { display: block; font-size: 18px; margin-bottom: 4px; }
+.drop span { color: var(--muted); font-size: 15px; }
+.drop .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.results { margin-top: 16px; display: grid; gap: 10px; }
+.res {
+  display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px;
+}
+.res img { width: 52px; height: 52px; object-fit: cover; border-radius: 9px; background: var(--bg); }
+.res .name { font: 600 14px var(--mono); direction: ltr; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.res .sizes { font-size: 13.5px; color: var(--muted); }
+.res .sizes b { font-weight: 700; color: var(--ink); }
+.res .saved { color: var(--good); font-weight: 800; }
+.res .saved.up { color: #D9534F; }
+.res a { font: 700 14px var(--font); color: var(--accent); text-decoration: none; white-space: nowrap; }
+.res a:hover { text-decoration: underline; }
+.total { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 6px; font-size: 15px; color: var(--muted); }
+.total b { color: var(--ink); }
+.note { margin-top: 18px; font-size: 14px; color: var(--muted); }
+
+/* gallery */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.tab {
+  font: 600 15px var(--font); padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); color: var(--muted);
+}
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); border-color: var(--accent); }
+.shot {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px; box-shadow: 0 30px 60px -40px rgba(16,20,28,.45);
+}
+.shot img { border-radius: 10px; width: 100%; height: auto; }
+.caption { color: var(--muted); font-size: 15px; margin: 14px 4px 0; }
+
+/* install */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: s; list-style: none; padding: 0; margin: 0; }
+.steps li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px; }
+.steps li::before {
+  content: counter(s, persian); display: grid; place-items: center; width: 38px; height: 38px;
+  border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-weight: 900; margin-bottom: 14px;
+}
+.steps h3 { margin: 0 0 6px; font-size: 18px; }
+.steps p { margin: 0; color: var(--muted); font-size: 15.5px; }
+.steps a { color: var(--accent); }
+pre {
+  margin: 28px 0 0; background: var(--screen); color: #D7E1F0; border-radius: var(--radius);
+  padding: 22px 24px; overflow-x: auto; font: 500 14px/1.8 var(--mono); direction: ltr; text-align: left;
+}
+pre .c { color: #6F7E96; }
+
+/* faq */
+.faq { display: grid; gap: 10px; }
+.faq details { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 22px; }
+.faq summary { cursor: pointer; font-weight: 800; padding: 14px 0; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "+"; font: 700 18px var(--mono); color: var(--accent); margin-left: 12px; }
+.faq details[open] summary::before { content: "−"; }
+.faq details p { margin: 0 0 16px; color: var(--muted); font-size: 15.5px; }
+
+/* footer */
+footer { border-top: 1px solid var(--line); padding: 44px 0 56px; }
+.foot { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
+.credit { font-size: 17px; }
+.credit a { color: var(--accent); font-weight: 800; text-decoration: none; }
+.credit a:hover { text-decoration: underline; }
+.foot nav { display: flex; flex-wrap: wrap; gap: 18px; color: var(--muted); font-size: 15px; }
+.foot nav a { text-decoration: none; }
+.foot nav a:hover { color: var(--ink); }
+.theme-btn { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 10px; padding: 6px 12px; font: 500 14px var(--font); cursor: pointer; }
+
+@media (max-width: 920px) {
+  .hero { grid-template-columns: 1fr; gap: 40px; padding-top: 24px; }
+  .features, .steps, .formats, .play { grid-template-columns: 1fr; }
+  .top nav { display: none; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 0 16px; }
+  section { padding: 60px 0; }
+  .res { grid-template-columns: 44px 1fr; }
+  .res img { width: 44px; height: 44px; }
+  .res a { grid-column: 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#">
+      <img src="assets/app_icon.png" alt="" width="36" height="36">
+      <span>Pro Image Converter <small>v1.3</small></span>
+    </a>
+    <nav aria-label="بخش‌ها">
+      <a href="#features">قابلیت‌ها</a>
+      <a href="#playground">امتحان آنلاین</a>
+      <a href="#screens">اسکرین‌شات‌ها</a>
+      <a href="#install">نصب</a>
+      <a href="https://github.com/mr-shady/ProImageConverter">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>یک پوشه عکس،<br><em>یک کلیک</em>، تمام.</h1>
+        <p class="lead">هزاران تصویر را یک‌جا به WEBP، AVIF، JPG، PNG و فرمت‌های دیگر تبدیل کنید؛ با تغییر اندازه، حفظ متادیتا و ساختار پوشه‌ها، بدون این‌که برنامه حتی یک لحظه قفل شود.</p>
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/mr-shady/ProImageConverter/releases/latest/download/ProImageConverter.exe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>
+            دانلود برای ویندوز
+          </a>
+          <a class="btn" href="#playground">امتحان در مرورگر</a>
+        </div>
+        <div class="meta">نسخه‌ی <span class="mono">1.3.0</span> · ویندوز ۱۰ و ۱۱ (۶۴ بیتی) · حدود ۴۲ مگابایت · بدون نیاز به نصب · رایگان و متن‌باز (MIT)</div>
+      </div>
+
+      <div>
+        <div class="stage">
+          <div class="badges"><span class="badge">34 files</span><span class="badge">7.6 s</span><span class="badge">→ WEBP</span></div>
+          <img id="heroShot" src="assets/shots/dark.png" alt="نمای برنامه پس از تبدیل ۳۴ تصویر" width="1280" height="891">
+        </div>
+        <div class="view-switch" id="heroSwitch">
+          <button class="chip" type="button" aria-pressed="true" data-img="dark">dark</button>
+          <button class="chip" type="button" aria-pressed="false" data-img="light">light</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="features">
+      <div class="eyebrow">FEATURES</div>
+      <h2>هر چیزی که برای تبدیل دسته‌ای لازم دارید</h2>
+      <p class="sub">برای عکاس‌ها، طراح‌ها و توسعه‌دهنده‌های وب که می‌خواهند حجم تصاویر را کم کنند یا فرمت‌شان را یک‌جا عوض کنند.</p>
+      <div class="features">
+        <div class="feature"><span class="k">BATCH · MULTI-THREAD</span><h3>تبدیل گروهی پرسرعت</h3><p>یک پوشه یا هزاران فایل را با چند رشته‌ی پردازشی هم‌زمان تبدیل کنید؛ رابط کاربری در تمام مدت روان می‌ماند و هر لحظه می‌شود لغو کرد.</p></div>
+        <div class="feature"><span class="k">SUBFOLDERS</span><h3>زیرپوشه‌ها و ساختار</h3><p>زیرپوشه‌ها را هم پردازش کنید و خروجی دقیقاً با همان ساختار پوشه‌های ورودی ساخته شود.</p></div>
+        <div class="feature"><span class="k">QUALITY · RESIZE</span><h3>کیفیت و اندازه</h3><p>کیفیت فشرده‌سازی را تنظیم کنید و با عرض‌های آماده یا ابعاد دلخواه، تصاویر را با حفظ نسبت کوچک کنید.</p></div>
+        <div class="feature"><span class="k">EXIF · ICC · MTIME</span><h3>حفظ اطلاعات تصویر</h3><p>EXIF، پروفایل رنگ و تاریخ فایل‌ها حفظ می‌شود؛ یا اگر حریم خصوصی مهم است، همه‌ی متادیتا را کامل پاک کنید.</p></div>
+        <div class="feature"><span class="k">ALPHA · GIF · WEBP</span><h3>شفافیت و انیمیشن</h3><p>برای JPG، BMP و PDF رنگ پس‌زمینه‌ی دلخواه جای شفافیت را می‌گیرد. GIF و WEBP متحرک هم متحرک می‌مانند.</p></div>
+        <div class="feature"><span class="k">SAFE WRITE</span><h3>امن و بی‌خطر</h3><p>هر فایل اول موقت ساخته و بعد جایگزین می‌شود؛ هیچ تصویری نیمه‌کاره خراب نمی‌شود و فایل‌های قبلی بی‌اجازه بازنویسی نمی‌شوند.</p></div>
+      </div>
+    </section>
+
+    <section id="formats">
+      <div class="eyebrow">FORMATS</div>
+      <h2>ده فرمت خروجی، بیش از بیست فرمت ورودی</h2>
+      <p class="sub">برنامه هنگام اجرا تشخیص می‌دهد کدام فرمت‌ها روی سیستم شما قابل خواندن و نوشتن‌اند و فقط همان‌ها را نشان می‌دهد.</p>
+      <div class="formats">
+        <div class="fmt-card">
+          <h3>خروجی</h3>
+          <p>همه‌ی فرمت‌های رایج وب، چاپ و آیکون.</p>
+          <div class="fmt-list">
+            <span class="fmt">WEBP</span><span class="fmt">JPG</span><span class="fmt">PNG</span><span class="fmt">AVIF</span><span class="fmt">HEIC</span>
+            <span class="fmt">TIFF</span><span class="fmt">BMP</span><span class="fmt">GIF</span><span class="fmt">ICO</span><span class="fmt">PDF</span>
+          </div>
+        </div>
+        <div class="fmt-card">
+          <h3>ورودی</h3>
+          <p>فرمت‌های استاندارد، به‌علاوه‌ی وکتور و فایل خام دوربین.</p>
+          <div class="fmt-list">
+            <span class="fmt">JPG</span><span class="fmt">PNG</span><span class="fmt">WEBP</span><span class="fmt">HEIC</span><span class="fmt">AVIF</span><span class="fmt">TIFF</span><span class="fmt">BMP</span><span class="fmt">GIF</span>
+            <span class="fmt opt">SVG</span><span class="fmt opt">DNG</span><span class="fmt opt">CR2</span><span class="fmt opt">CR3</span><span class="fmt opt">NEF</span><span class="fmt opt">ARW</span><span class="fmt opt">RAF</span><span class="fmt opt">ORF</span><span class="fmt opt">…</span>
+          </div>
+          <div class="legend">کادر خط‌چین: با نصب افزونه‌های اختیاری (CairoSVG و rawpy) فعال می‌شود.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="playground">
+      <div class="eyebrow">TRY IT</div>
+      <h2>همین‌جا امتحان کنید</h2>
+      <p class="sub">چند تصویر را بکشید و رها کنید تا ببینید چقدر از حجمشان کم می‌شود. تبدیل کاملاً داخل مرورگر خودتان انجام می‌شود و هیچ فایلی جایی ارسال نمی‌شود.</p>
+      <div class="play">
+        <div class="panel">
+          <div class="field">
+            <h3>فرمت خروجی</h3>
+            <div class="seg" id="fmtSeg"></div>
+          </div>
+          <div class="field">
+            <h3>کیفیت</h3>
+            <div class="range"><input type="range" id="quality" min="10" max="100" value="85" aria-label="کیفیت"><output id="qOut">85</output></div>
+            <div class="hint2" id="qHint">مقدار کمتر = فایل سبک‌تر</div>
+          </div>
+          <div class="field">
+            <h3>حداکثر عرض (پیکسل)</h3>
+            <input class="num" id="maxW" type="number" min="16" step="1" placeholder="بدون تغییر" value="1920">
+            <div class="hint2">خالی بگذارید تا اندازه دست نخورد.</div>
+          </div>
+        </div>
+        <div>
+          <label class="drop" id="drop">
+            <input type="file" id="files" accept="image/*" multiple hidden>
+            <strong>تصاویر را اینجا رها کنید</strong>
+            <span>یا کلیک کنید و انتخاب کنید · JPG، PNG، WEBP، GIF، BMP</span>
+            <div class="row"><button class="btn small" type="button" id="sample">با تصویر نمونه امتحان کن</button></div>
+          </label>
+          <div class="results" id="results" aria-live="polite"></div>
+          <div class="total" id="total" hidden>
+            <span id="totalText"></span>
+            <button class="btn small" type="button" id="clearBtn">پاک کردن</button>
+          </div>
+          <p class="note">نسخه‌ی دسکتاپ کار بیشتری می‌کند: AVIF و HEIC، فایل‌های RAW و SVG، حفظ EXIF و پروفایل رنگ، و پردازش کل پوشه با زیرپوشه‌ها.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="screens">
+      <div class="eyebrow">SCREENSHOTS</div>
+      <h2>رابط کاربری</h2>
+      <p class="sub">مسیرها و آمار در سمت چپ، همه‌ی تنظیمات در سه زبانه‌ی سمت راست. تنظیمات خودکار ذخیره می‌شوند.</p>
+      <div class="tabs" role="tablist" id="tabs">
+        <button class="tab" role="tab" aria-selected="true" data-img="dark" data-cap="بعد از تبدیل ۳۴ تصویر به WEBP؛ اعلان شناور خودش بسته می‌شود.">خروجی</button>
+        <button class="tab" role="tab" aria-selected="false" data-img="process" data-cap="زیرپوشه‌ها، ساختار پوشه، متادیتا، تاریخ فایل، انیمیشن و بازنویسی.">پردازش</button>
+        <button class="tab" role="tab" aria-selected="false" data-img="size" data-cap="عرض‌های آماده یا ابعاد دلخواه؛ نسبت تصویر همیشه حفظ می‌شود.">اندازه</button>
+        <button class="tab" role="tab" aria-selected="false" data-img="light" data-cap="تم روشن؛ تم سیستم هم پشتیبانی می‌شود.">تم روشن</button>
+      </div>
+      <div class="shot" role="tabpanel">
+        <img id="shot" src="assets/shots/dark.png" alt="نمای برنامه — خروجی" width="1280" height="891" loading="lazy">
+      </div>
+      <p class="caption" id="caption">بعد از تبدیل ۳۴ تصویر به WEBP؛ اعلان شناور خودش بسته می‌شود.</p>
+    </section>
+
+    <section id="install">
+      <div class="eyebrow">INSTALL</div>
+      <h2>بدون نصب، بدون پایتون</h2>
+      <p class="sub">نسخه‌ی آماده یک فایل اجرایی تک است؛ دانلود کنید و اجرا کنید.</p>
+      <ol class="steps">
+        <li><h3>دانلود</h3><p>فایل <span class="mono">ProImageConverter.exe</span> را از <a href="https://github.com/mr-shady/ProImageConverter/releases/latest">صفحه‌ی Releases</a> یا دکمه‌ی بالای صفحه بگیرید.</p></li>
+        <li><h3>اجرا</h3><p>اجرایش کنید. اگر SmartScreen هشدار داد، روی More info و سپس Run anyway بزنید.</p></li>
+        <li><h3>تبدیل</h3><p>پوشه‌ی ورودی را انتخاب کنید، فرمت و کیفیت را تعیین کنید و «شروع تبدیل» یا <span class="mono">Ctrl+Enter</span> را بزنید.</p></li>
+      </ol>
+      <pre><span class="c"># اجرا از سورس (Python 3.11+)</span>
+git clone https://github.com/mr-shady/ProImageConverter.git
+cd ProImageConverter
+python -m pip install -r requirements.txt
+python app.py
+
+<span class="c"># پشتیبانی اختیاری SVG و RAW</span>
+python -m pip install -r requirements-optional.txt
+
+<span class="c"># ساخت فایل اجرایی</span>
+build_exe.bat</pre>
+    </section>
+
+    <section id="faq">
+      <div class="eyebrow">FAQ</div>
+      <h2>سؤال‌های رایج</h2>
+      <div class="faq">
+        <details><summary>آیا تصاویر من جایی ارسال می‌شوند؟</summary><p>نه. برنامه کاملاً آفلاین کار می‌کند و هیچ اتصال اینترنتی لازم ندارد. بخش «امتحان آنلاین» همین صفحه هم فقط داخل مرورگر شما اجرا می‌شود.</p></details>
+        <details><summary>چرا خروجی SVG ندارد؟</summary><p>تبدیل تصویر پیکسلی به SVG واقعی «وکتورسازی» است، نه تغییر فرمت. ورودی SVG پشتیبانی می‌شود و به هر فرمت پیکسلی تبدیل می‌شود.</p></details>
+        <details><summary>اگر پوشه‌ی خروجی داخل پوشه‌ی ورودی باشد چه می‌شود؟</summary><p>مشکلی نیست؛ برنامه پوشه‌ی خروجی را از اسکن حذف می‌کند تا فایل‌های تبدیل‌شده دوباره پردازش نشوند.</p></details>
+        <details><summary>میانبرهای صفحه‌کلید چیست؟</summary><p><span class="mono">Ctrl+O</span> انتخاب پوشه‌ی ورودی، <span class="mono">Ctrl+Enter</span> شروع تبدیل و <span class="mono">Esc</span> لغو عملیات.</p></details>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <div class="credit">طراحی و توسعه توسط <a href="https://reza-nemati.ir">رضا نعمتی</a></div>
+    <nav>
+      <a href="https://github.com/mr-shady/ProImageConverter">GitHub</a>
+      <a href="https://github.com/mr-shady/ProImageConverter/blob/main/LICENSE">MIT License</a>
+      <a href="https://reza-nemati.ir">reza-nemati.ir</a>
+      <button class="theme-btn" id="themeBtn" type="button">تغییر تم</button>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // ---------- hero theme preview ----------
+  var heroShot = document.getElementById('heroShot');
+  document.querySelectorAll('#heroSwitch .chip').forEach(function (c, _, all) {
+    c.addEventListener('click', function () {
+      all.forEach(function (o) { o.setAttribute('aria-pressed', o === c ? 'true' : 'false'); });
+      heroShot.src = 'assets/shots/' + c.dataset.img + '.png';
+    });
+  });
+  new Image().src = 'assets/shots/light.png';
+
+  // ---------- screenshot tabs ----------
+  var shot = document.getElementById('shot'), caption = document.getElementById('caption');
+  document.querySelectorAll('#tabs .tab').forEach(function (t, _, all) {
+    t.addEventListener('click', function () {
+      all.forEach(function (o) { o.setAttribute('aria-selected', o === t ? 'true' : 'false'); });
+      shot.src = 'assets/shots/' + t.dataset.img + '.png';
+      shot.alt = 'نمای برنامه — ' + t.textContent;
+      caption.textContent = t.dataset.cap;
+    });
+  });
+
+  // ---------- in-browser converter ----------
+  var canvasProbe = document.createElement('canvas');
+  canvasProbe.width = canvasProbe.height = 1;
+  function supports(mime) { return canvasProbe.toDataURL(mime).indexOf('data:' + mime) === 0; }
+  var formats = [
+    { name: 'WEBP', mime: 'image/webp', lossy: true, ext: 'webp' },
+    { name: 'JPG', mime: 'image/jpeg', lossy: true, ext: 'jpg' },
+    { name: 'PNG', mime: 'image/png', lossy: false, ext: 'png' }
+  ].filter(function (f) { return supports(f.mime); });
+  var fmt = formats[0];
+
+  var seg = document.getElementById('fmtSeg');
+  formats.forEach(function (f) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = f.name;
+    b.setAttribute('aria-pressed', f === fmt ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      fmt = f;
+      seg.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-pressed', c === b ? 'true' : 'false'); });
+      syncQuality();
+      reconvert();
+    });
+    seg.appendChild(b);
+  });
+
+  var q = document.getElementById('quality'), qOut = document.getElementById('qOut'), qHint = document.getElementById('qHint');
+  var maxW = document.getElementById('maxW');
+  function syncQuality() {
+    q.disabled = !fmt.lossy;
+    qOut.textContent = fmt.lossy ? q.value : '—';
+    qHint.textContent = fmt.lossy ? 'مقدار کمتر = فایل سبک‌تر' : 'PNG بدون افت کیفیت است.';
+  }
+  var qTimer;
+  q.addEventListener('input', function () { qOut.textContent = q.value; clearTimeout(qTimer); qTimer = setTimeout(reconvert, 250); });
+  maxW.addEventListener('change', reconvert);
+  syncQuality();
+
+  var items = [];   // { name, size, bitmap, url, row }
+  var results = document.getElementById('results');
+  var total = document.getElementById('total'), totalText = document.getElementById('totalText');
+  var fa = new Intl.NumberFormat('fa-IR', { maximumFractionDigits: 1 });
+
+  function human(n) {
+    if (n < 1024) return fa.format(n) + ' بایت';
+    if (n < 1048576) return fa.format(n / 1024) + ' کیلوبایت';
+    return fa.format(n / 1048576) + ' مگابایت';
+  }
+
+  function encode(item) {
+    var b = item.bitmap, w = b.width, h = b.height, limit = parseInt(maxW.value, 10);
+    if (limit > 0 && w > limit) { h = Math.round(h * limit / w); w = limit; }
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var ctx = c.getContext('2d');
+    if (fmt.mime === 'image/jpeg') { ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h); }
+    ctx.drawImage(b, 0, 0, w, h);
+    return new Promise(function (res) { c.toBlob(function (blob) { res({ blob: blob, w: w, h: h }); }, fmt.mime, q.value / 100); });
+  }
+
+  function render(item, out) {
+    if (item.url) URL.revokeObjectURL(item.url);
+    item.url = URL.createObjectURL(out.blob);
+    item.outSize = out.blob.size;
+    var diff = 1 - out.blob.size / item.size;
+    var base = item.name.replace(/\.[^.]+$/, '');
+    item.row.innerHTML = '';
+    var img = document.createElement('img'); img.src = item.url; img.alt = '';
+    var mid = document.createElement('div');
+    var nm = document.createElement('div'); nm.className = 'name'; nm.textContent = base + '.' + fmt.ext;
+    var sz = document.createElement('div'); sz.className = 'sizes';
+    sz.innerHTML = '<b>' + human(item.size) + '</b> ← <b>' + human(out.blob.size) + '</b> · ' +
+      '<span class="saved' + (diff < 0 ? ' up' : '') + '">' + (diff >= 0 ? fa.format(diff * 100) + '٪ کمتر' : fa.format(-diff * 100) + '٪ بیشتر') + '</span>' +
+      ' · <span class="mono">' + out.w + '×' + out.h + '</span>';
+    mid.appendChild(nm); mid.appendChild(sz);
+    var a = document.createElement('a'); a.href = item.url; a.download = base + '.' + fmt.ext; a.textContent = 'دانلود';
+    item.row.appendChild(img); item.row.appendChild(mid); item.row.appendChild(a);
+    summarize();
+  }
+
+  function summarize() {
+    var done = items.filter(function (i) { return i.outSize; });
+    total.hidden = !items.length;
+    if (!done.length) { totalText.textContent = ''; return; }
+    var a = 0, b = 0;
+    done.forEach(function (i) { a += i.size; b += i.outSize; });
+    totalText.innerHTML = fa.format(done.length) + ' تصویر · مجموع <b>' + human(a) + '</b> ← <b>' + human(b) + '</b>' +
+      (a > b ? ' · <span style="color:var(--good);font-weight:800">' + fa.format((1 - b / a) * 100) + '٪ صرفه‌جویی</span>' : '');
+  }
+
+  function add(name, size, bitmap) {
+    var row = document.createElement('div'); row.className = 'res';
+    row.innerHTML = '<span></span><div class="sizes">در حال تبدیل…</div>';
+    results.appendChild(row);
+    var item = { name: name, size: size, bitmap: bitmap, row: row };
+    items.push(item);
+    encode(item).then(function (out) { render(item, out); });
+  }
+
+  function reconvert() { items.forEach(function (i) { encode(i).then(function (out) { render(i, out); }); }); }
+
+  function takeFiles(list) {
+    Array.prototype.forEach.call(list, function (f) {
+      if (!/^image\//.test(f.type)) return;
+      createImageBitmap(f).then(function (bmp) { add(f.name, f.size, bmp); }, function () {});
+    });
+  }
+
+  var drop = document.getElementById('drop'), input = document.getElementById('files');
+  input.addEventListener('change', function () { takeFiles(input.files); input.value = ''; });
+  ['dragenter', 'dragover'].forEach(function (e) { drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (e) { drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function (ev) { takeFiles(ev.dataTransfer.files); });
+
+  // sample: a 2400×1600 PNG with gradients and shapes, a typical "heavy" export
+  document.getElementById('sample').addEventListener('click', function (ev) {
+    ev.preventDefault(); ev.stopPropagation();
+    var c = document.createElement('canvas'); c.width = 2400; c.height = 1600;
+    var x = c.getContext('2d');
+    var g = x.createLinearGradient(0, 0, 2400, 1600);
+    g.addColorStop(0, '#0B1220'); g.addColorStop(.55, '#2F6FED'); g.addColorStop(1, '#F2B866');
+    x.fillStyle = g; x.fillRect(0, 0, 2400, 1600);
+    for (var i = 0; i < 90; i++) {
+      x.globalAlpha = .08 + Math.random() * .25;
+      x.fillStyle = 'hsl(' + (200 + Math.random() * 60) + ',80%,' + (50 + Math.random() * 40) + '%)';
+      x.beginPath(); x.arc(Math.random() * 2400, Math.random() * 1600, 20 + Math.random() * 260, 0, 7); x.fill();
+    }
+    x.globalAlpha = 1;
+    // light sensor grain, so the numbers look like a real photo rather than a flat graphic
+    var d = x.getImageData(0, 0, 2400, 1600), p = d.data;
+    for (var k = 0; k < p.length; k += 4) {
+      var n = (Math.random() - .5) * 18;
+      p[k] += n; p[k + 1] += n; p[k + 2] += n;
+    }
+    x.putImageData(d, 0, 0);
+    c.toBlob(function (blob) {
+      createImageBitmap(blob).then(function (bmp) { add('sample-photo.png', blob.size, bmp); });
+    }, 'image/png');
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function () {
+    items.forEach(function (i) { if (i.url) URL.revokeObjectURL(i.url); });
+    items = []; results.innerHTML = ''; summarize();
+  });
+
+  // ---------- theme toggle (remembered per browser) ----------
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem('pic-theme'); if (saved) root.dataset.theme = saved; } catch (e) {}
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('pic-theme', root.dataset.theme); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

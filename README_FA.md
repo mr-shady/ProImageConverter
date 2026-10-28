@@ -2,11 +2,16 @@
 
 یک برنامه دسکتاپ فارسی برای تبدیل گروهی تصاویر یک پوشه به فرمت دلخواه.
 
+- **وب‌سایت:** [mr-shady.github.io/ProImageConverter](https://mr-shady.github.io/ProImageConverter/)
+- **دانلود نسخه‌ی آماده:** [ProImageConverter.exe](https://github.com/mr-shady/ProImageConverter/releases/latest/download/ProImageConverter.exe)
+
 ## نمای برنامه
 
 | حالت تیره | حالت روشن |
 | --- | --- |
-| ![نمای تیره برنامه](docs/ui-dark.png) | ![نمای روشن برنامه](docs/ui-light.png) |
+| ![نمای تیره برنامه](docs/assets/shots/dark.png) | ![نمای روشن برنامه](docs/assets/shots/light.png) |
+| **زبانه‌ی پردازش** | **زبانه‌ی اندازه** |
+| ![تنظیمات پردازش](docs/assets/shots/process.png) | ![تنظیمات اندازه](docs/assets/shots/size.png) |
 
 ## امکانات
 
